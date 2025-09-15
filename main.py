@@ -1,6 +1,8 @@
 import yfinance as yf
 import pandas as pd
+import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
+from time import sleep
 
 def stocks_download():
     tickers = ['SPY', 'BIRD','GLD','VTI', 'QQQ'] # SPDR S&P 500 ETF (SPY), Allbirds, Inc. (BIRD), SPDR Gold Shares (GLD), Vanguard Total Stock Market Index Fund ETF Shares (VTI), Invesco QQQ Trust (QQQ)
@@ -30,14 +32,24 @@ def stocks_download():
 
     
 
-def stocks_read():
-    pass
+def stocks_plot():
+    
+    df = pd.read_csv('stocks.csv')
+
+    df.plot()
+
+    plt.show()
+
+# this isnt working right (https://www.w3schools.com/python/matplotlib_markers.asp) more here will look into more.
 
 def main():
-
+    
     stocks_download()
+    sleep(1)
+    stocks_plot()
 
 
 
 if __name__ == "__main__":
     main()
+    

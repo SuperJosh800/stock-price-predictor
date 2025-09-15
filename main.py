@@ -2,27 +2,42 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 
+def stocks_download():
+    tickers = ['SPY', 'BIRD','GLD','VTI', 'QQQ'] # SPDR S&P 500 ETF (SPY), Allbirds, Inc. (BIRD), SPDR Gold Shares (GLD), Vanguard Total Stock Market Index Fund ETF Shares (VTI), Invesco QQQ Trust (QQQ)
 
-tickers = ['SPY', 'BIRD','GLD','VTI', 'QQQ'] # SPDR S&P 500 ETF (SPY), Allbirds, Inc. (BIRD), SPDR Gold Shares (GLD), Vanguard Total Stock Market Index Fund ETF Shares (VTI), Invesco QQQ Trust (QQQ)
+    end_date = datetime.today()
+    print(end_date)
 
-end_date = datetime.today()
-print(end_date)
+    start_date = end_date - timedelta(days = 2*365) # how many years of data we download
+    print(start_date)
 
-start_date = end_date - timedelta(days = 5*365)
-print(start_date)
+    data = yf.download(tickers, start=start_date, end=end_date, group_by='ticker')
 
-data = yf.download(tickers, start=start_date, end=end_date, group_by='ticker')
+    all_data = []
 
-all_data = []
+    for ticker in tickers:
+        df = data[ticker].copy() #gets the tickers data
+        df.reset_index(inplace=True)  #moves date out of index and into own colum
+        df['Ticker'] = ticker         #makes column to remember ticker
+        all_data.append(df)           # stores it for later
 
-for ticker in tickers:
-    df = data[ticker].copy() #gets the tickers data
-    df.reset_index(inplace=True)  #moves date out of index and into own colum
-    df['Ticker'] = ticker         #makes column to remember ticker
-    all_data.append(df)           # stores it for later
+    df2 = pd.concat(all_data)
 
-final_df = pd.concat(all_data)
+    df2 = df2[['Date', 'Ticker', 'Open', 'High', 'Low', 'Close', 'Volume']] # colums
+    main_df = df2.dropna #removes empty cells from df
 
-final_df = final_df[['Date', 'Ticker', 'Open', 'High', 'Low', 'Close', 'Volume']] # colums
+    df2.to_csv('stocks.csv', index=False)
 
-final_df.to_csv('stocks.csv', index=False)
+    
+
+def stocks_read():
+    pass
+
+def main():
+
+    stocks_download()
+
+
+
+if __name__ == "__main__":
+    main()
